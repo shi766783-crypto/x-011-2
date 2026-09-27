@@ -2,9 +2,14 @@
 import { computed } from 'vue'
 import StatCard from '@/components/StatCard.vue'
 import TrendChart from '@/components/TrendChart.vue'
+import CheckinCalendar from '@/components/CheckinCalendar.vue'
+import { useLogsStore } from '@/stores/logs'
+import { usePlansStore } from '@/stores/plans'
 import { useStatsStore } from '@/stores/stats'
 
 const statsStore = useStatsStore()
+const logsStore = useLogsStore()
+const plansStore = usePlansStore()
 const stats = computed(() => statsStore.stats)
 </script>
 
@@ -29,11 +34,17 @@ const stats = computed(() => statsStore.stats)
       </template>
       <TrendChart :data="stats.trend" />
     </el-card>
+
+    <CheckinCalendar class="calendar-card" :logs="logsStore.logs" :plans="plansStore.plans" />
   </div>
 </template>
 
 <style scoped>
 .chart-card {
+  margin-top: 20px;
+}
+
+.calendar-card {
   margin-top: 20px;
 }
 </style>
