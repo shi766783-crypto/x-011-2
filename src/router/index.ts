@@ -28,6 +28,12 @@ const router = createRouter({
           meta: { title: '学习日志' },
         },
         {
+          path: 'checkin',
+          name: 'checkin',
+          component: () => import('@/views/CheckinView.vue'),
+          meta: { title: '打卡日历' },
+        },
+        {
           path: 'cards',
           name: 'cards',
           component: () => import('@/views/CardsView.vue'),

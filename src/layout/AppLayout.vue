@@ -12,6 +12,7 @@ const navItems: NavItem[] = [
   { path: '/dashboard', title: '学习看板', icon: '📊' },
   { path: '/plans', title: '学习计划', icon: '🎯' },
   { path: '/logs', title: '学习日志', icon: '📝' },
+  { path: '/checkin', title: '打卡日历', icon: '📅' },
   { path: '/cards', title: '知识卡片', icon: '📚' },
   { path: '/review', title: '卡片复习', icon: '🔁' },
   { path: '/challenges', title: '学习挑战', icon: '🏅' },

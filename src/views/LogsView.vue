@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import type { MasteryLevel, StudyLog } from '@/types'
@@ -13,13 +14,14 @@ import { useStatsStore } from '@/stores/stats'
 const logsStore = useLogsStore()
 const plansStore = usePlansStore()
 const statsStore = useStatsStore()
+const route = useRoute()
 
 const dialogVisible = ref(false)
 const editingId = ref<string | null>(null)
 const formRef = ref<FormInstance>()
 
 const emptyForm = () => ({
-  date: today(),
+  date: typeof route.query.date === 'string' ? route.query.date : today(),
   planId: '',
   content: '',
   duration: 1,

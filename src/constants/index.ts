@@ -6,6 +6,9 @@ export const DOMAINS: Domain[] = ['语言', '编程', '考证', '兴趣', '学�
 /** 卡片掌握程度选项 */
 export const CARD_MASTERY_LEVELS: CardMastery[] = ['生疏', '熟悉', '精通']
 
+/** 每日达标学习时长（小时）：打卡日历据此判断当天是否达标 */
+export const DAILY_GOAL_HOURS = 1
+
 /** 掌握程度 → 颜色映射（Element Plus tag type） */
 export const CARD_MASTERY_TAG_TYPE: Record<CardMastery, 'danger' | 'warning' | 'success'> = {
   生疏: 'danger',

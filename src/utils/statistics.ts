@@ -1,9 +1,17 @@
-import type { KnowledgeCard, StudyLog, StudyPlan, StudyStats, TrendPoint } from '@/types'
+import type {
+  KnowledgeCard,
+  MonthSummary,
+  StudyLog,
+  StudyPlan,
+  StudyStats,
+  TrendPoint,
+} from '@/types'
+import { DAILY_GOAL_HOURS } from '@/constants'
 import { addDays, lastNDateKeys, monthOf, shortLabel, today } from '@/utils/date'
 import { isPlanCompleted } from '@/utils/progress'
 
 /** 按日期聚合学习时长（小时） */
-function groupDurationByDate(logs: StudyLog[]): Map<string, number> {
+export function groupDurationByDate(logs: StudyLog[]): Map<string, number> {
   const map = new Map<string, number>()
   for (const log of logs) {
     map.set(log.date, (map.get(log.date) ?? 0) + log.duration)
@@ -42,6 +50,60 @@ export function maxStreak(logs: StudyLog[]): number {
     best = Math.max(best, run)
   }
   return best
+}
+
+/**
+ * 截止到某日（含当日）向前连续打卡的天数。
+ * 逐日回退判断，跨月份时只是日期键正常增减，不会在月末/月初处断开。
+ */
+export function streakEndingAt(dates: Set<string>, date: string): number {
+  let streak = 0
+  let cursor = date
+  while (dates.has(cursor)) {
+    streak += 1
+    cursor = addDays(cursor, -1)
+  }
+  return streak
+}
+
+/** 某一天是否处于一段长度 >= 2 的连续打卡中（跨月不断） */
+export function isInStreak(dates: Set<string>, date: string): boolean {
+  return (
+    dates.has(date) &&
+    (dates.has(addDays(date, -1)) || dates.has(addDays(date, 1)))
+  )
+}
+
+/**
+ * 指定月份（YYYY-MM）的打卡汇总。
+ * 最长连续天数取该月每个学习日"向前连续打卡长度"的最大值，
+ * 该长度通过逐日回退计算，跨月相邻（如 3/31 与 4/1）自然接续，不会断档。
+ */
+export function monthSummary(logs: StudyLog[], month: string): MonthSummary {
+  const byDate = groupDurationByDate(logs)
+  const dates = new Set(logs.map((l) => l.date))
+
+  let totalDuration = 0
+  let activeDays = 0
+  let goalDays = 0
+  let maxStreakInMonth = 0
+
+  for (const [date, duration] of byDate) {
+    if (monthOf(date) !== month) continue
+    totalDuration += duration
+    activeDays += 1
+    if (duration >= DAILY_GOAL_HOURS) goalDays += 1
+    // streakEndingAt 逐日回退，3/31 接 4/1 时会把上月天数一并计入
+    maxStreakInMonth = Math.max(maxStreakInMonth, streakEndingAt(dates, date))
+  }
+
+  const round1 = (v: number) => Math.round(v * 10) / 10
+  return {
+    totalDuration: round1(totalDuration),
+    activeDays,
+    goalDays,
+    maxStreak: maxStreakInMonth,
+  }
 }
 
 /** 平均每日学习时长（按有记录的天数计算） */

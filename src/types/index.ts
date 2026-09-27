@@ -131,6 +131,18 @@ export interface TrendPoint {
   duration: number
 }
 
+/** 单月打卡汇总 */
+export interface MonthSummary {
+  /** 当月累计学习时长（小时） */
+  totalDuration: number
+  /** 当月有记录的天数 */
+  activeDays: number
+  /** 当月达标天数（达到每日目标时长） */
+  goalDays: number
+  /** 当月涉及的最长连续打卡（含跨月衔接，如 3/31 接着 4/1） */
+  maxStreak: number
+}
+
 /** 实体创建输入（去除由系统生成的字段） */
 export type PlanInput = Omit<StudyPlan, 'id' | 'createdAt' | 'completedAt'>
 export type LogInput = Omit<StudyLog, 'id' | 'createdAt'>
